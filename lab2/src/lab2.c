@@ -19,14 +19,16 @@ typedef struct {
 void read_matrix(const char* filename, double*** matrix, int* n) {
     int fd = open(filename, O_RDONLY);
     if (fd < 0) {
-        perror("Error opening file");
+        const char* msg = "Error opening file\n";
+        write(STDERR_FILENO, msg, strlen(msg));
         exit(EXIT_FAILURE);
     }
 
     char buffer[BUF_SIZE];
     ssize_t bytes = read(fd, buffer, sizeof(buffer));
     if (bytes <= 0) {
-        perror("Error reading file");
+        const char* msg = "Error reading file\n";
+        write(STDERR_FILENO, msg, strlen(msg));
         close(fd);
         exit(EXIT_FAILURE);
     }
