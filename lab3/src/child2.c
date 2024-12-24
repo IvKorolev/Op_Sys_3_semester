@@ -8,55 +8,49 @@
 #include <ctype.h>
 
 #define SHM_NAME "shm_lab"
-#define SEM_READ_NAME "/sem_read"
-#define SEM_WRITE_NAME "/sem_write"
+#define SEM_READ2_NAME "/sem_read2"
+#define SEM_WRITE2_NAME "/sem_write2"
 #define BUF_SIZE 4096
 
 int main() {
     int shm_fd = shm_open(SHM_NAME, O_RDWR, 0666);
     if (shm_fd == -1) {
-        const char msg[] = "error: failed to open shared memory in child2\n";
-        write(STDERR_FILENO, msg, sizeof(msg) - 1);
+        perror("Ошибка открытия памяти в child2");
         exit(EXIT_FAILURE);
     }
 
     char *shared_memory = mmap(NULL, BUF_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
     if (shared_memory == MAP_FAILED) {
-        const char msg[] = "error: failed to map shared memory in child2\n";
-        write(STDERR_FILENO, msg, sizeof(msg) - 1);
+        perror("Ошибка маппинга памяти в child2");
         exit(EXIT_FAILURE);
     }
 
-    sem_t *sem_read = sem_open(SEM_READ_NAME, 0);
-    sem_t *sem_write = sem_open(SEM_WRITE_NAME, 0);
-    if (sem_read == SEM_FAILED || sem_write == SEM_FAILED) {
-        const char msg[] = "error: failed to open semaphores in child2\n";
-        write(STDERR_FILENO, msg, sizeof(msg) - 1);
+    sem_t *sem_read2 = sem_open(SEM_READ2_NAME, 0);
+    sem_t *sem_write2 = sem_open(SEM_WRITE2_NAME, 0);
+    if (!sem_read2 || !sem_write2) {
+        perror("Ошибка открытия семафоров в child2");
         exit(EXIT_FAILURE);
     }
 
-    char buffer[BUF_SIZE];
     while (1) {
-        sem_wait(sem_read);
+        sem_wait(sem_read2);
 
-        memcpy(buffer, shared_memory, BUF_SIZE);
-        if (strlen(buffer) == 0) {
+        if (strcmp(shared_memory, "END") == 0) {
             break;
         }
 
-        for (size_t i = 0; i < strlen(buffer); i++) {
-            if (isspace((unsigned char)buffer[i])) {
-                buffer[i] = '_';
+        for (size_t i = 0; shared_memory[i]; i++) {
+            if (isspace((unsigned char)shared_memory[i])) {
+                shared_memory[i] = '_';
             }
         }
 
-        memcpy(shared_memory, buffer, BUF_SIZE);
-        sem_post(sem_write);
+        sem_post(sem_write2);
     }
 
     munmap(shared_memory, BUF_SIZE);
-    sem_close(sem_read);
-    sem_close(sem_write);
+    sem_close(sem_read2);
+    sem_close(sem_write2);
 
     return 0;
 }
