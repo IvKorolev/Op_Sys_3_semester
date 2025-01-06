@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <stdint.h>
+#include <time.h>
 
 typedef struct Allocator Allocator;
 

@@ -1,4 +1,5 @@
 #include "allocator.h"
+#include <dlfcn.h>
 
 #define SNPRINTF_BUF 256
 
@@ -85,8 +86,8 @@ int main(int argc, char *argv[]) {
         write_message(buffer);
 
         for (int i = 0; i < 5; i++) {
-            snprintf(stud_array[i].first_name, sizeof(stud_array[i].first_name), "Vladimir%d", i + 1);
-            snprintf(stud_array[i].last_name, sizeof(stud_array[i].last_name), "Bugrenkov%d", i + 1);
+            snprintf(stud_array[i].first_name, sizeof(stud_array[i].first_name), "Ivan%d", i + 1);
+            snprintf(stud_array[i].last_name, sizeof(stud_array[i].last_name), "Korolev%d", i + 1);
             snprintf(stud_array[i].group, sizeof(stud_array[i].group), "М8О-21%d-23", i);
         }
 
