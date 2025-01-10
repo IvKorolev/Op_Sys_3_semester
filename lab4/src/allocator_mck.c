@@ -30,7 +30,6 @@ EXPORT Allocator *allocator_create(void *memory_region, const size_t region_size
     allocator->total_size = region_size - sizeof(Allocator);
     allocator->free_list_head = (Block *) allocator->base_addr;
 
-    // Инициализация списка
     allocator->free_list_head->size = allocator->total_size - sizeof(Block);
     allocator->free_list_head->next_block = NULL;
 
