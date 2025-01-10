@@ -15,9 +15,9 @@ typedef struct Block {
 } Block;
 
 struct Allocator {
-    char *base_addr;           // Базовый адрес памяти
-    size_t total_size;         // Общий размер памяти
-    Block *free_list_head;     // Голова списка свободных блоков
+    char *base_addr;
+    size_t total_size;
+    Block *free_list_head;
 };
 
 EXPORT Allocator *allocator_create(void *memory_region, const size_t region_size) {
